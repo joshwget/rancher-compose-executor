@@ -52,13 +52,6 @@ func (r *RancherService) Context() *Context {
 	return r.context
 }
 
-func (r *RancherService) RancherConfig() RancherConfig {
-	if config, ok := r.context.RancherConfig[r.name]; ok {
-		return config
-	}
-	return RancherConfig{}
-}
-
 func NewService(name string, config *config.ServiceConfig, context *Context) *RancherService {
 	return &RancherService{
 		name:          name,
@@ -236,32 +229,19 @@ func (r *RancherService) FindExisting(name string) (*client.Service, error) {
 }
 
 func (r *RancherService) Metadata() map[string]interface{} {
-	if config, ok := r.context.RancherConfig[r.name]; ok {
-		return rUtils.NestedMapsToMapInterface(config.Metadata)
-	}
-	return map[string]interface{}{}
+	return rUtils.NestedMapsToMapInterface(r.serviceConfig.Metadata)
 }
 
+// TODO: is this still needed?
 func (r *RancherService) HealthCheck(service string) *client.InstanceHealthCheck {
-	if service == "" {
-		service = r.name
-	}
-	if config, ok := r.context.RancherConfig[service]; ok {
-		return config.HealthCheck
-	}
-
-	return nil
+	return r.serviceConfig.HealthCheck
 }
 
 func (r *RancherService) getConfiguredScale() int {
-	scale := 1
-	if config, ok := r.context.RancherConfig[r.name]; ok {
-		if config.Scale > 0 {
-			scale = int(config.Scale)
-		}
+	if r.serviceConfig.Scale > 0 {
+		return int(r.serviceConfig.Scale)
 	}
-
-	return scale
+	return 1
 }
 
 func (r *RancherService) createService() (*client.Service, error) {
@@ -509,7 +489,7 @@ func (r *RancherService) DependentServices() []project.ServiceRelationship {
 	}
 
 	// Load balancers should depend on non-external target services
-	lbConfig := r.RancherConfig().LbConfig
+	lbConfig := r.serviceConfig.LbConfig
 	if lbConfig != nil {
 		for _, portRule := range lbConfig.PortRules {
 			if portRule.Service != "" && !strings.Contains(portRule.Service, "/") {
