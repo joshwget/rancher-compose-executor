@@ -412,14 +412,7 @@ func (r *RancherService) pipeLogs(container *client.Container, conn *websocket.C
 }
 
 func (r *RancherService) DependentServices() []project.ServiceRelationship {
-	result := []project.ServiceRelationship{}
-
-	for _, rel := range service.DefaultDependentServices(r.context.Project, r) {
-		if rel.Type == project.RelTypeLink {
-			rel.Optional = true
-			result = append(result, rel)
-		}
-	}
+	result := service.DefaultDependentServices(r.context.Project.ServiceConfigs, r)
 
 	// Load balancers should depend on non-external target services
 	lbConfig := r.serviceConfig.LbConfig

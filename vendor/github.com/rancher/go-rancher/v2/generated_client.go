@@ -33,6 +33,8 @@ type RancherClient struct {
 	ContainerExec                            ContainerExecOperations
 	ContainerLogs                            ContainerLogsOperations
 	ContainerProxy                           ContainerProxyOperations
+	ContainerUpgrade                         ContainerUpgradeOperations
+	ConvertToServiceInput                    ConvertToServiceInputOperations
 	Credential                               CredentialOperations
 	Databasechangelog                        DatabasechangelogOperations
 	Databasechangeloglock                    DatabasechangeloglockOperations
@@ -70,6 +72,8 @@ type RancherClient struct {
 	InstanceConsoleInput                     InstanceConsoleInputOperations
 	InstanceHealthCheck                      InstanceHealthCheckOperations
 	InstanceLink                             InstanceLinkOperations
+	InstanceRemove                           InstanceRemoveOperations
+	InstanceRevision                         InstanceRevisionOperations
 	InstanceStop                             InstanceStopOperations
 	IpAddress                                IpAddressOperations
 	KubernetesService                        KubernetesServiceOperations
@@ -123,7 +127,6 @@ type RancherClient struct {
 	RestoreFromBackupInput                   RestoreFromBackupInputOperations
 	RevertToSnapshotInput                    RevertToSnapshotInputOperations
 	RollingRestartStrategy                   RollingRestartStrategyOperations
-	ScalePolicy                              ScalePolicyOperations
 	ScheduledUpgrade                         ScheduledUpgradeOperations
 	SecondaryLaunchConfig                    SecondaryLaunchConfigOperations
 	Secret                                   SecretOperations
@@ -137,6 +140,8 @@ type RancherClient struct {
 	ServiceLog                               ServiceLogOperations
 	ServiceProxy                             ServiceProxyOperations
 	ServiceRestart                           ServiceRestartOperations
+	ServiceRevision                          ServiceRevisionOperations
+	ServiceRollback                          ServiceRollbackOperations
 	ServiceUpgrade                           ServiceUpgradeOperations
 	ServiceUpgradeStrategy                   ServiceUpgradeStrategyOperations
 	ServicesPortRange                        ServicesPortRangeOperations
@@ -157,7 +162,6 @@ type RancherClient struct {
 	TargetPortRule                           TargetPortRuleOperations
 	Task                                     TaskOperations
 	TaskInstance                             TaskInstanceOperations
-	ToServiceUpgradeStrategy                 ToServiceUpgradeStrategyOperations
 	TypeDocumentation                        TypeDocumentationOperations
 	Ulimit                                   UlimitOperations
 	VirtualMachine                           VirtualMachineOperations
@@ -203,6 +207,8 @@ func constructClient(rancherBaseClient *RancherBaseClientImpl) *RancherClient {
 	client.ContainerExec = newContainerExecClient(client)
 	client.ContainerLogs = newContainerLogsClient(client)
 	client.ContainerProxy = newContainerProxyClient(client)
+	client.ContainerUpgrade = newContainerUpgradeClient(client)
+	client.ConvertToServiceInput = newConvertToServiceInputClient(client)
 	client.Credential = newCredentialClient(client)
 	client.Databasechangelog = newDatabasechangelogClient(client)
 	client.Databasechangeloglock = newDatabasechangeloglockClient(client)
@@ -240,6 +246,8 @@ func constructClient(rancherBaseClient *RancherBaseClientImpl) *RancherClient {
 	client.InstanceConsoleInput = newInstanceConsoleInputClient(client)
 	client.InstanceHealthCheck = newInstanceHealthCheckClient(client)
 	client.InstanceLink = newInstanceLinkClient(client)
+	client.InstanceRemove = newInstanceRemoveClient(client)
+	client.InstanceRevision = newInstanceRevisionClient(client)
 	client.InstanceStop = newInstanceStopClient(client)
 	client.IpAddress = newIpAddressClient(client)
 	client.KubernetesService = newKubernetesServiceClient(client)
@@ -293,7 +301,6 @@ func constructClient(rancherBaseClient *RancherBaseClientImpl) *RancherClient {
 	client.RestoreFromBackupInput = newRestoreFromBackupInputClient(client)
 	client.RevertToSnapshotInput = newRevertToSnapshotInputClient(client)
 	client.RollingRestartStrategy = newRollingRestartStrategyClient(client)
-	client.ScalePolicy = newScalePolicyClient(client)
 	client.ScheduledUpgrade = newScheduledUpgradeClient(client)
 	client.SecondaryLaunchConfig = newSecondaryLaunchConfigClient(client)
 	client.Secret = newSecretClient(client)
@@ -307,6 +314,8 @@ func constructClient(rancherBaseClient *RancherBaseClientImpl) *RancherClient {
 	client.ServiceLog = newServiceLogClient(client)
 	client.ServiceProxy = newServiceProxyClient(client)
 	client.ServiceRestart = newServiceRestartClient(client)
+	client.ServiceRevision = newServiceRevisionClient(client)
+	client.ServiceRollback = newServiceRollbackClient(client)
 	client.ServiceUpgrade = newServiceUpgradeClient(client)
 	client.ServiceUpgradeStrategy = newServiceUpgradeStrategyClient(client)
 	client.ServicesPortRange = newServicesPortRangeClient(client)
@@ -327,7 +336,6 @@ func constructClient(rancherBaseClient *RancherBaseClientImpl) *RancherClient {
 	client.TargetPortRule = newTargetPortRuleClient(client)
 	client.Task = newTaskClient(client)
 	client.TaskInstance = newTaskInstanceClient(client)
-	client.ToServiceUpgradeStrategy = newToServiceUpgradeStrategyClient(client)
 	client.TypeDocumentation = newTypeDocumentationClient(client)
 	client.Ulimit = newUlimitClient(client)
 	client.VirtualMachine = newVirtualMachineClient(client)

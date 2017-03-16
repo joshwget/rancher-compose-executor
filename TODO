@@ -1,0 +1,11 @@
+support v2 docker compose with v1 rancher compose
+
+hosts key is creating SSH keys in digital ocean
+
+containers now have revision history that can be listed, upgrading to an old revision is rollback
+load balancers should be able to point to containers
+should cattle be prefixing container names? should I?
+
+instance links are map[string(alias)]string(containerID)
+health check on standalone containers
+should deleting a stack delete all of the containers in a stack?

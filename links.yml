@@ -1,0 +1,9 @@
+link1:
+  image: nginx
+  links:
+  - link2
+
+link2:
+  image: nginx
+  links:
+  - link1

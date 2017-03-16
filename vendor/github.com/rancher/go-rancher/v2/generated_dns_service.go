@@ -35,11 +35,15 @@ type DnsService struct {
 
 	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
+	PreviousRevisionId string `json:"previousRevisionId,omitempty" yaml:"previous_revision_id,omitempty"`
+
 	RemoveTime string `json:"removeTime,omitempty" yaml:"remove_time,omitempty"`
 
 	Removed string `json:"removed,omitempty" yaml:"removed,omitempty"`
 
 	RetainIp bool `json:"retainIp,omitempty" yaml:"retain_ip,omitempty"`
+
+	RevisionId string `json:"revisionId,omitempty" yaml:"revision_id,omitempty"`
 
 	SelectorLink string `json:"selectorLink,omitempty" yaml:"selector_link,omitempty"`
 
@@ -85,13 +89,15 @@ type DnsServiceOperations interface {
 
 	ActionCancelupgrade(*DnsService) (*Service, error)
 
-	ActionContinueupgrade(*DnsService) (*Service, error)
-
 	ActionCreate(*DnsService) (*Service, error)
 
 	ActionDeactivate(*DnsService) (*Service, error)
 
 	ActionFinishupgrade(*DnsService) (*Service, error)
+
+	ActionGarbagecollect(*DnsService) (*Service, error)
+
+	ActionPause(*DnsService) (*Service, error)
 
 	ActionRemove(*DnsService) (*Service, error)
 
@@ -99,7 +105,7 @@ type DnsServiceOperations interface {
 
 	ActionRestart(*DnsService, *ServiceRestart) (*Service, error)
 
-	ActionRollback(*DnsService) (*Service, error)
+	ActionRollback(*DnsService, *ServiceRollback) (*Service, error)
 
 	ActionSetservicelinks(*DnsService, *SetServiceLinksInput) (*Service, error)
 
@@ -185,15 +191,6 @@ func (c *DnsServiceClient) ActionCancelupgrade(resource *DnsService) (*Service, 
 	return resp, err
 }
 
-func (c *DnsServiceClient) ActionContinueupgrade(resource *DnsService) (*Service, error) {
-
-	resp := &Service{}
-
-	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "continueupgrade", &resource.Resource, nil, resp)
-
-	return resp, err
-}
-
 func (c *DnsServiceClient) ActionCreate(resource *DnsService) (*Service, error) {
 
 	resp := &Service{}
@@ -217,6 +214,24 @@ func (c *DnsServiceClient) ActionFinishupgrade(resource *DnsService) (*Service, 
 	resp := &Service{}
 
 	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "finishupgrade", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *DnsServiceClient) ActionGarbagecollect(resource *DnsService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "garbagecollect", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *DnsServiceClient) ActionPause(resource *DnsService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "pause", &resource.Resource, nil, resp)
 
 	return resp, err
 }
@@ -248,11 +263,11 @@ func (c *DnsServiceClient) ActionRestart(resource *DnsService, input *ServiceRes
 	return resp, err
 }
 
-func (c *DnsServiceClient) ActionRollback(resource *DnsService) (*Service, error) {
+func (c *DnsServiceClient) ActionRollback(resource *DnsService, input *ServiceRollback) (*Service, error) {
 
 	resp := &Service{}
 
-	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "rollback", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(DNS_SERVICE_TYPE, "rollback", &resource.Resource, input, resp)
 
 	return resp, err
 }

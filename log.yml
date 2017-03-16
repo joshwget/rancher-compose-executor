@@ -1,0 +1,19 @@
+version: '2'
+
+containers:
+  a:
+    image: debian
+    command: 'bash -c "for((i=1;i<=1000;i+=2)); do echo a; sleep 1; done"'
+
+  b:
+    image: debian
+    command: 'bash -c "for((i=1;i<=1000;i+=2)); do echo b; sleep 1; done"'
+    links:
+    - a
+
+  c:
+    image: debian
+    command: 'bash -c "for((i=1;i<=1000;i+=2)); do echo c; sleep 1; done"'
+    links:
+    - a
+    - b

@@ -11,6 +11,8 @@ type StorageDriverService struct {
 
 	AssignServiceIpAddress bool `json:"assignServiceIpAddress,omitempty" yaml:"assign_service_ip_address,omitempty"`
 
+	BatchSize int64 `json:"batchSize,omitempty" yaml:"batch_size,omitempty"`
+
 	CreateIndex int64 `json:"createIndex,omitempty" yaml:"create_index,omitempty"`
 
 	Created string `json:"created,omitempty" yaml:"created,omitempty"`
@@ -29,6 +31,8 @@ type StorageDriverService struct {
 
 	InstanceIds []string `json:"instanceIds,omitempty" yaml:"instance_ids,omitempty"`
 
+	IntervalMillis int64 `json:"intervalMillis,omitempty" yaml:"interval_millis,omitempty"`
+
 	Kind string `json:"kind,omitempty" yaml:"kind,omitempty"`
 
 	LaunchConfig *LaunchConfig `json:"launchConfig,omitempty" yaml:"launch_config,omitempty"`
@@ -41,6 +45,8 @@ type StorageDriverService struct {
 
 	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
+	PreviousRevisionId string `json:"previousRevisionId,omitempty" yaml:"previous_revision_id,omitempty"`
+
 	PublicEndpoints []PublicEndpoint `json:"publicEndpoints,omitempty" yaml:"public_endpoints,omitempty"`
 
 	RemoveTime string `json:"removeTime,omitempty" yaml:"remove_time,omitempty"`
@@ -49,9 +55,15 @@ type StorageDriverService struct {
 
 	RetainIp bool `json:"retainIp,omitempty" yaml:"retain_ip,omitempty"`
 
+	RevisionId string `json:"revisionId,omitempty" yaml:"revision_id,omitempty"`
+
 	Scale int64 `json:"scale,omitempty" yaml:"scale,omitempty"`
 
-	ScalePolicy *ScalePolicy `json:"scalePolicy,omitempty" yaml:"scale_policy,omitempty"`
+	ScaleIncrement int64 `json:"scaleIncrement,omitempty" yaml:"scale_increment,omitempty"`
+
+	ScaleMax int64 `json:"scaleMax,omitempty" yaml:"scale_max,omitempty"`
+
+	ScaleMin int64 `json:"scaleMin,omitempty" yaml:"scale_min,omitempty"`
 
 	SecondaryLaunchConfigs []SecondaryLaunchConfig `json:"secondaryLaunchConfigs,omitempty" yaml:"secondary_launch_configs,omitempty"`
 
@@ -60,6 +72,8 @@ type StorageDriverService struct {
 	SelectorLink string `json:"selectorLink,omitempty" yaml:"selector_link,omitempty"`
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
+
+	StartFirst bool `json:"startFirst,omitempty" yaml:"start_first,omitempty"`
 
 	StartOnCreate bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
 
@@ -105,13 +119,15 @@ type StorageDriverServiceOperations interface {
 
 	ActionCancelupgrade(*StorageDriverService) (*Service, error)
 
-	ActionContinueupgrade(*StorageDriverService) (*Service, error)
-
 	ActionCreate(*StorageDriverService) (*Service, error)
 
 	ActionDeactivate(*StorageDriverService) (*Service, error)
 
 	ActionFinishupgrade(*StorageDriverService) (*Service, error)
+
+	ActionGarbagecollect(*StorageDriverService) (*Service, error)
+
+	ActionPause(*StorageDriverService) (*Service, error)
 
 	ActionRemove(*StorageDriverService) (*Service, error)
 
@@ -119,7 +135,7 @@ type StorageDriverServiceOperations interface {
 
 	ActionRestart(*StorageDriverService, *ServiceRestart) (*Service, error)
 
-	ActionRollback(*StorageDriverService) (*Service, error)
+	ActionRollback(*StorageDriverService, *ServiceRollback) (*Service, error)
 
 	ActionSetservicelinks(*StorageDriverService, *SetServiceLinksInput) (*Service, error)
 
@@ -205,15 +221,6 @@ func (c *StorageDriverServiceClient) ActionCancelupgrade(resource *StorageDriver
 	return resp, err
 }
 
-func (c *StorageDriverServiceClient) ActionContinueupgrade(resource *StorageDriverService) (*Service, error) {
-
-	resp := &Service{}
-
-	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "continueupgrade", &resource.Resource, nil, resp)
-
-	return resp, err
-}
-
 func (c *StorageDriverServiceClient) ActionCreate(resource *StorageDriverService) (*Service, error) {
 
 	resp := &Service{}
@@ -237,6 +244,24 @@ func (c *StorageDriverServiceClient) ActionFinishupgrade(resource *StorageDriver
 	resp := &Service{}
 
 	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "finishupgrade", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *StorageDriverServiceClient) ActionGarbagecollect(resource *StorageDriverService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "garbagecollect", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *StorageDriverServiceClient) ActionPause(resource *StorageDriverService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "pause", &resource.Resource, nil, resp)
 
 	return resp, err
 }
@@ -268,11 +293,11 @@ func (c *StorageDriverServiceClient) ActionRestart(resource *StorageDriverServic
 	return resp, err
 }
 
-func (c *StorageDriverServiceClient) ActionRollback(resource *StorageDriverService) (*Service, error) {
+func (c *StorageDriverServiceClient) ActionRollback(resource *StorageDriverService, input *ServiceRollback) (*Service, error) {
 
 	resp := &Service{}
 
-	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "rollback", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(STORAGE_DRIVER_SERVICE_TYPE, "rollback", &resource.Resource, input, resp)
 
 	return resp, err
 }

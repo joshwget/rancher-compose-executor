@@ -386,5 +386,23 @@ network_drivers:
         assert s.networkDriver.defaultNetwork.name == 'vxlan'
 
 
+# TODO: move to seperate file
+def test_containers(client):
+    template = '''
+version: '2'
+containers:
+  test:
+    image: nginx
+'''
+
+    name = 'project-' + random_str()
+    env = client.create_stack(name=name, dockerCompose=template)
+    env = client.wait_success(env)
+    env = client.wait_success(env.activateservices())
+    assert env.state == 'active'
+
+    containers = env.containers()
+    assert len(containers) == 1
+
 def _base():
     return path.dirname(__file__)

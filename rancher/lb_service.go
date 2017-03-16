@@ -130,6 +130,7 @@ frontend %s
 				BackendName: portRule.BackendName,
 				Selector:    portRule.Selector,
 			}
+			// TODO: do the same thing for containers once it's added
 			if portRule.Service != "" {
 				targetService, err := r.FindExisting(portRule.Service)
 				if err != nil {
@@ -139,6 +140,7 @@ frontend %s
 					return fmt.Errorf("Failed to find existing service: %s", portRule.Service)
 				}
 				finalPortRule.ServiceId = targetService.Id
+				finalPo
 			}
 			service.RealLbConfig.PortRules = append(service.RealLbConfig.PortRules, finalPortRule)
 		}
