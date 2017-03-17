@@ -1,0 +1,51 @@
+support v2 docker compose with v1 rancher compose
+
+hosts key is creating SSH keys in digital ocean
+
+containers now have revision history that can be listed, upgrading to an old revision is rollback
+load balancers should be able to point to containers
+should cattle be prefixing container names? should I?
+container upgrade
+
+instance links are map[string(alias)]string(containerID)
+health check on standalone containers
+should deleting a stack delete all of the containers in a stack?
+fix errors with container logging
+
+how to handle --batch-size? just ignore it for all containers?
+
+
+
+
+
+
+
+panic: runtime error: invalid memory address or nil pointer dereference
+[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x8978d5]
+
+goroutine 49 [running]:
+github.com/rancher/rancher-compose-executor/rancher.(*RancherContainer).Log(0xc4201bf020, 0xf5aec0, 0xc420014258, 0xc420417f01, 0xc420417ef8, 0xc420018400)
+	/go/src/github.com/rancher/rancher-compose-executor/rancher/container.go:134 +0x75
+github.com/rancher/rancher-compose-executor/project.(*Project).Log.func1.1(0xf5f240, 0xc4201bf020, 0xc420210c48, 0x3)
+	/go/src/github.com/rancher/rancher-compose-executor/project/commands.go:37 +0x4b
+github.com/rancher/rancher-compose-executor/project.(*serviceWrapper).Do(0xc420134460, 0x0, 0x0, 0x0, 0xc420417fa0)
+	/go/src/github.com/rancher/rancher-compose-executor/project/service-wrapper.go:101 +0x124
+github.com/rancher/rancher-compose-executor/project.(*Project).Log.func1(0xc420134460, 0xc420523590)
+	/go/src/github.com/rancher/rancher-compose-executor/project/commands.go:38 +0x8c
+created by github.com/rancher/rancher-compose-executor/project.(*Project).startService
+	/go/src/github.com/rancher/rancher-compose-executor/project/project.go:344 +0x567
+
+
+TO TEST
+
+functional load balancer pointing to container
+container build
+container pull (is this --pull from CLI only? test from UI?)
+
+flags
+- --pull
+- -d
+- --upgrade
+- --force-upgrade
+- * --pull and --force-upgrade together
+- 

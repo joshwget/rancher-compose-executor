@@ -75,6 +75,8 @@ type Container struct {
 
 	Environment map[string]interface{} `json:"environment,omitempty" yaml:"environment,omitempty"`
 
+	ExitCode int64 `json:"exitCode,omitempty" yaml:"exit_code,omitempty"`
+
 	Expose []string `json:"expose,omitempty" yaml:"expose,omitempty"`
 
 	ExternalId string `json:"externalId,omitempty" yaml:"external_id,omitempty"`
@@ -137,6 +139,8 @@ type Container struct {
 
 	MemorySwappiness int64 `json:"memorySwappiness,omitempty" yaml:"memory_swappiness,omitempty"`
 
+	Metadata map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+
 	MilliCpuReservation int64 `json:"milliCpuReservation,omitempty" yaml:"milli_cpu_reservation,omitempty"`
 
 	Mounts []MountEntry `json:"mounts,omitempty" yaml:"mounts,omitempty"`
@@ -163,6 +167,8 @@ type Container struct {
 
 	Ports []string `json:"ports,omitempty" yaml:"ports,omitempty"`
 
+	PrePullOnUpgrade bool `json:"prePullOnUpgrade,omitempty" yaml:"pre_pull_on_upgrade,omitempty"`
+
 	PrimaryIpAddress string `json:"primaryIpAddress,omitempty" yaml:"primary_ip_address,omitempty"`
 
 	PrimaryNetworkId string `json:"primaryNetworkId,omitempty" yaml:"primary_network_id,omitempty"`
@@ -179,9 +185,13 @@ type Container struct {
 
 	Removed string `json:"removed,omitempty" yaml:"removed,omitempty"`
 
+	ReplacementFor string `json:"replacementFor,omitempty" yaml:"replacement_for,omitempty"`
+
 	RequestedHostId string `json:"requestedHostId,omitempty" yaml:"requested_host_id,omitempty"`
 
 	RestartPolicy *RestartPolicy `json:"restartPolicy,omitempty" yaml:"restart_policy,omitempty"`
+
+	RevisionId string `json:"revisionId,omitempty" yaml:"revision_id,omitempty"`
 
 	Secrets []SecretReference `json:"secrets,omitempty" yaml:"secrets,omitempty"`
 
@@ -192,6 +202,8 @@ type Container struct {
 	ServiceIds []string `json:"serviceIds,omitempty" yaml:"service_ids,omitempty"`
 
 	ShmSize int64 `json:"shmSize,omitempty" yaml:"shm_size,omitempty"`
+
+	SidekickTo string `json:"sidekickTo,omitempty" yaml:"sidekick_to,omitempty"`
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
 
@@ -263,6 +275,8 @@ type ContainerOperations interface {
 
 	ActionConsole(*Container, *InstanceConsoleInput) (*InstanceConsole, error)
 
+	ActionConverttoservice(*Container, *ConvertToServiceInput) (*Service, error)
+
 	ActionCreate(*Container) (*Instance, error)
 
 	ActionDeallocate(*Container) (*Instance, error)
@@ -279,7 +293,7 @@ type ContainerOperations interface {
 
 	ActionPurge(*Container) (*Instance, error)
 
-	ActionRemove(*Container) (*Instance, error)
+	ActionRemove(*Container, *InstanceRemove) (*Instance, error)
 
 	ActionRestart(*Container) (*Instance, error)
 
@@ -296,6 +310,8 @@ type ContainerOperations interface {
 	ActionUpdatereinitializing(*Container) (*Instance, error)
 
 	ActionUpdateunhealthy(*Container) (*Instance, error)
+
+	ActionUpgrade(*Container, *ContainerUpgrade) (*Container, error)
 }
 
 func newContainerClient(rancherClient *RancherClient) *ContainerClient {
@@ -362,6 +378,15 @@ func (c *ContainerClient) ActionConsole(resource *Container, input *InstanceCons
 	resp := &InstanceConsole{}
 
 	err := c.rancherClient.doAction(CONTAINER_TYPE, "console", &resource.Resource, input, resp)
+
+	return resp, err
+}
+
+func (c *ContainerClient) ActionConverttoservice(resource *Container, input *ConvertToServiceInput) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(CONTAINER_TYPE, "converttoservice", &resource.Resource, input, resp)
 
 	return resp, err
 }
@@ -438,11 +463,11 @@ func (c *ContainerClient) ActionPurge(resource *Container) (*Instance, error) {
 	return resp, err
 }
 
-func (c *ContainerClient) ActionRemove(resource *Container) (*Instance, error) {
+func (c *ContainerClient) ActionRemove(resource *Container, input *InstanceRemove) (*Instance, error) {
 
 	resp := &Instance{}
 
-	err := c.rancherClient.doAction(CONTAINER_TYPE, "remove", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(CONTAINER_TYPE, "remove", &resource.Resource, input, resp)
 
 	return resp, err
 }
@@ -515,6 +540,15 @@ func (c *ContainerClient) ActionUpdateunhealthy(resource *Container) (*Instance,
 	resp := &Instance{}
 
 	err := c.rancherClient.doAction(CONTAINER_TYPE, "updateunhealthy", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *ContainerClient) ActionUpgrade(resource *Container, input *ContainerUpgrade) (*Container, error) {
+
+	resp := &Container{}
+
+	err := c.rancherClient.doAction(CONTAINER_TYPE, "upgrade", &resource.Resource, input, resp)
 
 	return resp, err
 }

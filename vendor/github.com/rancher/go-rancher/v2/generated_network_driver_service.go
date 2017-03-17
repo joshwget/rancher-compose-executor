@@ -11,6 +11,8 @@ type NetworkDriverService struct {
 
 	AssignServiceIpAddress bool `json:"assignServiceIpAddress,omitempty" yaml:"assign_service_ip_address,omitempty"`
 
+	BatchSize int64 `json:"batchSize,omitempty" yaml:"batch_size,omitempty"`
+
 	CreateIndex int64 `json:"createIndex,omitempty" yaml:"create_index,omitempty"`
 
 	Created string `json:"created,omitempty" yaml:"created,omitempty"`
@@ -29,6 +31,8 @@ type NetworkDriverService struct {
 
 	InstanceIds []string `json:"instanceIds,omitempty" yaml:"instance_ids,omitempty"`
 
+	IntervalMillis int64 `json:"intervalMillis,omitempty" yaml:"interval_millis,omitempty"`
+
 	Kind string `json:"kind,omitempty" yaml:"kind,omitempty"`
 
 	LaunchConfig *LaunchConfig `json:"launchConfig,omitempty" yaml:"launch_config,omitempty"`
@@ -43,6 +47,8 @@ type NetworkDriverService struct {
 
 	NetworkDriver NetworkDriver `json:"networkDriver,omitempty" yaml:"network_driver,omitempty"`
 
+	PreviousRevisionId string `json:"previousRevisionId,omitempty" yaml:"previous_revision_id,omitempty"`
+
 	PublicEndpoints []PublicEndpoint `json:"publicEndpoints,omitempty" yaml:"public_endpoints,omitempty"`
 
 	RemoveTime string `json:"removeTime,omitempty" yaml:"remove_time,omitempty"`
@@ -51,9 +57,15 @@ type NetworkDriverService struct {
 
 	RetainIp bool `json:"retainIp,omitempty" yaml:"retain_ip,omitempty"`
 
+	RevisionId string `json:"revisionId,omitempty" yaml:"revision_id,omitempty"`
+
 	Scale int64 `json:"scale,omitempty" yaml:"scale,omitempty"`
 
-	ScalePolicy *ScalePolicy `json:"scalePolicy,omitempty" yaml:"scale_policy,omitempty"`
+	ScaleIncrement int64 `json:"scaleIncrement,omitempty" yaml:"scale_increment,omitempty"`
+
+	ScaleMax int64 `json:"scaleMax,omitempty" yaml:"scale_max,omitempty"`
+
+	ScaleMin int64 `json:"scaleMin,omitempty" yaml:"scale_min,omitempty"`
 
 	SecondaryLaunchConfigs []SecondaryLaunchConfig `json:"secondaryLaunchConfigs,omitempty" yaml:"secondary_launch_configs,omitempty"`
 
@@ -62,6 +74,8 @@ type NetworkDriverService struct {
 	SelectorLink string `json:"selectorLink,omitempty" yaml:"selector_link,omitempty"`
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
+
+	StartFirst bool `json:"startFirst,omitempty" yaml:"start_first,omitempty"`
 
 	StartOnCreate bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
 
@@ -105,13 +119,15 @@ type NetworkDriverServiceOperations interface {
 
 	ActionCancelupgrade(*NetworkDriverService) (*Service, error)
 
-	ActionContinueupgrade(*NetworkDriverService) (*Service, error)
-
 	ActionCreate(*NetworkDriverService) (*Service, error)
 
 	ActionDeactivate(*NetworkDriverService) (*Service, error)
 
 	ActionFinishupgrade(*NetworkDriverService) (*Service, error)
+
+	ActionGarbagecollect(*NetworkDriverService) (*Service, error)
+
+	ActionPause(*NetworkDriverService) (*Service, error)
 
 	ActionRemove(*NetworkDriverService) (*Service, error)
 
@@ -119,7 +135,7 @@ type NetworkDriverServiceOperations interface {
 
 	ActionRestart(*NetworkDriverService, *ServiceRestart) (*Service, error)
 
-	ActionRollback(*NetworkDriverService) (*Service, error)
+	ActionRollback(*NetworkDriverService, *ServiceRollback) (*Service, error)
 
 	ActionSetservicelinks(*NetworkDriverService, *SetServiceLinksInput) (*Service, error)
 
@@ -205,15 +221,6 @@ func (c *NetworkDriverServiceClient) ActionCancelupgrade(resource *NetworkDriver
 	return resp, err
 }
 
-func (c *NetworkDriverServiceClient) ActionContinueupgrade(resource *NetworkDriverService) (*Service, error) {
-
-	resp := &Service{}
-
-	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "continueupgrade", &resource.Resource, nil, resp)
-
-	return resp, err
-}
-
 func (c *NetworkDriverServiceClient) ActionCreate(resource *NetworkDriverService) (*Service, error) {
 
 	resp := &Service{}
@@ -237,6 +244,24 @@ func (c *NetworkDriverServiceClient) ActionFinishupgrade(resource *NetworkDriver
 	resp := &Service{}
 
 	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "finishupgrade", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *NetworkDriverServiceClient) ActionGarbagecollect(resource *NetworkDriverService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "garbagecollect", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *NetworkDriverServiceClient) ActionPause(resource *NetworkDriverService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "pause", &resource.Resource, nil, resp)
 
 	return resp, err
 }
@@ -268,11 +293,11 @@ func (c *NetworkDriverServiceClient) ActionRestart(resource *NetworkDriverServic
 	return resp, err
 }
 
-func (c *NetworkDriverServiceClient) ActionRollback(resource *NetworkDriverService) (*Service, error) {
+func (c *NetworkDriverServiceClient) ActionRollback(resource *NetworkDriverService, input *ServiceRollback) (*Service, error) {
 
 	resp := &Service{}
 
-	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "rollback", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(NETWORK_DRIVER_SERVICE_TYPE, "rollback", &resource.Resource, input, resp)
 
 	return resp, err
 }

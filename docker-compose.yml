@@ -1,0 +1,40 @@
+version: '2'
+
+#load_balancers:
+#  lb:
+#    image: rancher/lb-service-haproxy
+#    ports:
+#    - 80:80
+#    port_rules:
+#    - source_port: 80
+#      target_port: 9999
+#      container: web
+      #service: web2
+
+services:
+  prints:
+    image: joshwget/test
+  web2:
+    image: nginx
+    ports:
+    - 80
+    health_check:
+      response_timeout: 4000
+      healthy_threshold: 2
+      port: 42
+      unhealthy_threshold: 3
+      interval: 4000
+
+containers:
+  printc:
+    image: joshwget/test
+  web:
+    image: nginx
+    ports:
+    - 9999:80
+    health_check:
+      response_timeout: 3000
+      healthy_threshold: 2
+      port: 42
+      unhealthy_threshold: 3
+      interval: 4000

@@ -1,0 +1,7 @@
+version: '2'
+containers:
+  aaa:
+    image: nginx
+
+  bbb:
+    image: nginx
