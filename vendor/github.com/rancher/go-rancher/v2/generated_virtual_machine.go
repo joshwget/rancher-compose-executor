@@ -59,6 +59,8 @@ type VirtualMachine struct {
 
 	DomainName string `json:"domainName,omitempty" yaml:"domain_name,omitempty"`
 
+	ExitCode int64 `json:"exitCode,omitempty" yaml:"exit_code,omitempty"`
+
 	Expose []string `json:"expose,omitempty" yaml:"expose,omitempty"`
 
 	ExternalId string `json:"externalId,omitempty" yaml:"external_id,omitempty"`
@@ -121,6 +123,8 @@ type VirtualMachine struct {
 
 	MemorySwappiness int64 `json:"memorySwappiness,omitempty" yaml:"memory_swappiness,omitempty"`
 
+	Metadata map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+
 	MilliCpuReservation int64 `json:"milliCpuReservation,omitempty" yaml:"milli_cpu_reservation,omitempty"`
 
 	Mounts []MountEntry `json:"mounts,omitempty" yaml:"mounts,omitempty"`
@@ -153,6 +157,8 @@ type VirtualMachine struct {
 
 	Removed string `json:"removed,omitempty" yaml:"removed,omitempty"`
 
+	ReplacementFor string `json:"replacementFor,omitempty" yaml:"replacement_for,omitempty"`
+
 	RequestedHostId string `json:"requestedHostId,omitempty" yaml:"requested_host_id,omitempty"`
 
 	RestartPolicy *RestartPolicy `json:"restartPolicy,omitempty" yaml:"restart_policy,omitempty"`
@@ -164,6 +170,8 @@ type VirtualMachine struct {
 	ServiceIds []string `json:"serviceIds,omitempty" yaml:"service_ids,omitempty"`
 
 	ShmSize int64 `json:"shmSize,omitempty" yaml:"shm_size,omitempty"`
+
+	SidekickTo string `json:"sidekickTo,omitempty" yaml:"sidekick_to,omitempty"`
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
 
@@ -231,6 +239,8 @@ type VirtualMachineOperations interface {
 
 	ActionConsole(*VirtualMachine, *InstanceConsoleInput) (*InstanceConsole, error)
 
+	ActionConverttoservice(*VirtualMachine, *ConvertToServiceInput) (*Service, error)
+
 	ActionCreate(*VirtualMachine) (*Instance, error)
 
 	ActionDeallocate(*VirtualMachine) (*Instance, error)
@@ -247,7 +257,7 @@ type VirtualMachineOperations interface {
 
 	ActionPurge(*VirtualMachine) (*Instance, error)
 
-	ActionRemove(*VirtualMachine) (*Instance, error)
+	ActionRemove(*VirtualMachine, *InstanceRemove) (*Instance, error)
 
 	ActionRestart(*VirtualMachine) (*Instance, error)
 
@@ -264,6 +274,8 @@ type VirtualMachineOperations interface {
 	ActionUpdatereinitializing(*VirtualMachine) (*Instance, error)
 
 	ActionUpdateunhealthy(*VirtualMachine) (*Instance, error)
+
+	ActionUpgrade(*VirtualMachine, *ContainerUpgrade) (*Container, error)
 }
 
 func newVirtualMachineClient(rancherClient *RancherClient) *VirtualMachineClient {
@@ -330,6 +342,15 @@ func (c *VirtualMachineClient) ActionConsole(resource *VirtualMachine, input *In
 	resp := &InstanceConsole{}
 
 	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "console", &resource.Resource, input, resp)
+
+	return resp, err
+}
+
+func (c *VirtualMachineClient) ActionConverttoservice(resource *VirtualMachine, input *ConvertToServiceInput) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "converttoservice", &resource.Resource, input, resp)
 
 	return resp, err
 }
@@ -406,11 +427,11 @@ func (c *VirtualMachineClient) ActionPurge(resource *VirtualMachine) (*Instance,
 	return resp, err
 }
 
-func (c *VirtualMachineClient) ActionRemove(resource *VirtualMachine) (*Instance, error) {
+func (c *VirtualMachineClient) ActionRemove(resource *VirtualMachine, input *InstanceRemove) (*Instance, error) {
 
 	resp := &Instance{}
 
-	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "remove", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "remove", &resource.Resource, input, resp)
 
 	return resp, err
 }
@@ -483,6 +504,15 @@ func (c *VirtualMachineClient) ActionUpdateunhealthy(resource *VirtualMachine) (
 	resp := &Instance{}
 
 	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "updateunhealthy", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *VirtualMachineClient) ActionUpgrade(resource *VirtualMachine, input *ContainerUpgrade) (*Container, error) {
+
+	resp := &Container{}
+
+	err := c.rancherClient.doAction(VIRTUAL_MACHINE_TYPE, "upgrade", &resource.Resource, input, resp)
 
 	return resp, err
 }

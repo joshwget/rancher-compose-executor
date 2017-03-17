@@ -69,7 +69,7 @@ type InstanceOperations interface {
 
 	ActionPurge(*Instance) (*Instance, error)
 
-	ActionRemove(*Instance) (*Instance, error)
+	ActionRemove(*Instance, *InstanceRemove) (*Instance, error)
 
 	ActionRestart(*Instance) (*Instance, error)
 
@@ -201,11 +201,11 @@ func (c *InstanceClient) ActionPurge(resource *Instance) (*Instance, error) {
 	return resp, err
 }
 
-func (c *InstanceClient) ActionRemove(resource *Instance) (*Instance, error) {
+func (c *InstanceClient) ActionRemove(resource *Instance, input *InstanceRemove) (*Instance, error) {
 
 	resp := &Instance{}
 
-	err := c.rancherClient.doAction(INSTANCE_TYPE, "remove", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(INSTANCE_TYPE, "remove", &resource.Resource, input, resp)
 
 	return resp, err
 }
