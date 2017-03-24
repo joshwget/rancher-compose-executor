@@ -77,7 +77,7 @@ type NetworkDriverService struct {
 
 	StartFirst bool `json:"startFirst,omitempty" yaml:"start_first,omitempty"`
 
-	StartOnCreate bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
+	StartOnCreate *bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
 
 	State string `json:"state,omitempty" yaml:"state,omitempty"`
 

@@ -49,7 +49,7 @@ type ExternalService struct {
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
 
-	StartOnCreate bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
+	StartOnCreate *bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
 
 	State string `json:"state,omitempty" yaml:"state,omitempty"`
 

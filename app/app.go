@@ -167,17 +167,17 @@ func ProjectCreate(p *project.Project, c *cli.Context) error {
 	}
 
 	// This is to fix circular links... What!? It works.
-	if err := p.Create(context.Background(), options.Create{}, c.Args()...); err != nil {
+	/*if err := p.Create(context.Background(), options.Create{}, c.Args()...); err != nil {
 		return err
-	}
+	}*/
 
 	return nil
 }
 
 func ProjectUp(p *project.Project, c *cli.Context) error {
-	if err := p.Create(context.Background(), options.Create{}, c.Args()...); err != nil {
+	/*if err := p.Create(context.Background(), options.Create{}, c.Args()...); err != nil {
 		return err
-	}
+	}*/
 
 	if err := p.Up(context.Background(), options.Up{}, c.Args()...); err != nil {
 		return err
