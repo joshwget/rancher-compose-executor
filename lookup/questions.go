@@ -151,7 +151,7 @@ func ask(question model.Question) string {
 	return answer
 }
 
-func (f *QuestionLookup) Variables() map[string]string {
+func (f *QuestionLookup) Variables() map[string]interface{} {
 	// TODO: precedence
-	return rUtils.MapUnion(f.variables, f.parent.Variables())
+	return rUtils.MapInterfaceUnion(rUtils.ToMapInterface(f.variables), f.parent.Variables())
 }

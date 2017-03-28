@@ -6,6 +6,7 @@ import (
 
 	"github.com/docker/libcompose/yaml"
 	"github.com/rancher/rancher-compose-executor/config"
+	"github.com/rancher/rancher-compose-executor/utils"
 )
 
 // OsEnvLookup is a "bare" structure that implements the project.EnvironmentLookup interface
@@ -24,7 +25,7 @@ func (o *OsEnvLookup) Lookup(key string, config *config.ServiceConfig) []string 
 	return []string{fmt.Sprintf("%s=%s", key, ret)}
 }
 
-func (o *OsEnvLookup) Variables() map[string]string {
+func (o *OsEnvLookup) Variables() map[string]interface{} {
 	environ := yaml.MaporEqualSlice(os.Environ())
-	return environ.ToMap()
+	return utils.ToMapInterface(environ.ToMap())
 }

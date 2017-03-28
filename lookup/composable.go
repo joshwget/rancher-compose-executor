@@ -25,10 +25,10 @@ func (l *ComposableEnvLookup) Lookup(key string, config *config.ServiceConfig) [
 	return result
 }
 
-func (l *ComposableEnvLookup) Variables() map[string]string {
-	variables := map[string]string{}
+func (l *ComposableEnvLookup) Variables() map[string]interface{} {
+	variables := map[string]interface{}{}
 	for _, lookup := range l.Lookups {
-		variables = utils.MapUnion(variables, lookup.Variables())
+		variables = utils.MapInterfaceUnion(variables, lookup.Variables())
 	}
 	return variables
 }

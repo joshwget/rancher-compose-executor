@@ -59,6 +59,6 @@ func (f *FileEnvLookup) Lookup(key string, config *config.ServiceConfig) []strin
 	return f.parent.Lookup(key, config)
 }
 
-func (f *FileEnvLookup) Variables() map[string]string {
-	return utils.MapUnion(f.variables, f.parent.Variables())
+func (f *FileEnvLookup) Variables() map[string]interface{} {
+	return utils.MapInterfaceUnion(utils.ToMapInterface(f.variables), f.parent.Variables())
 }

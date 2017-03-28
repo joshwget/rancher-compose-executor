@@ -94,6 +94,20 @@ func MapUnion(left, right map[string]string) map[string]string {
 	return ret
 }
 
+func MapInterfaceUnion(left, right map[string]interface{}) map[string]interface{} {
+	ret := map[string]interface{}{}
+
+	for k, v := range left {
+		ret[k] = v
+	}
+
+	for k, v := range right {
+		ret[k] = v
+	}
+
+	return ret
+}
+
 func TrimSplit(str, sep string, count int) []string {
 	result := []string{}
 	for _, i := range strings.SplitN(strings.TrimSpace(str), sep, count) {

@@ -81,6 +81,10 @@ func constructProject(logger *logrus.Entry, stack *client.Stack, url, accessKey,
 
 func createVariableMap(stack *client.Stack, rancherCompose string) (map[string]interface{}, error) {
 	variables := map[string]interface{}{}
+	if stack.Answers != nil {
+		variables = stack.Answers
+	}
+
 	for k, v := range stack.Environment {
 		variables[k] = v
 	}

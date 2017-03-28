@@ -256,7 +256,7 @@ one:
         assert s.launchConfig.labels.d == 'e'
 
 
-def test_stack_templating(client):
+def test_stack_environment_templating(client):
     name = 'project-' + random_str()
     rancher_compose = '''
 .catalog:
@@ -300,6 +300,61 @@ two:
     env = client.wait_success(env.activateservices())
     assert env.state == 'active'
     assert env.environment == environment
+    for s in env.services():
+        s = client.wait_success(s)
+        assert s.state == 'active'
+        if s.name == 'one':
+            assert s.launchConfig.imageUuid == 'docker:nginx'
+            assert s.launchConfig.labels.label == 'true'
+        if s.name == 'two':
+            assert s.launchConfig.imageUuid == 'docker:busybox'
+            assert s.launchConfig.labels.label == 'false'
+
+
+def test_stack_answers_templating(client):
+    name = 'project-' + random_str()
+    rancher_compose = '''
+.catalog:
+  uuid: foo
+  questions:
+  - variable: "image1"
+    type: "string"
+    default: "nginx"
+  - variable: "image2"
+    type: "string"
+    default: "nginx"
+  - variable: "b1"
+    type: "boolean"
+  - variable: "b2"
+    type: "boolean"
+'''
+    template = '''
+one:
+  image: {{ .Values.image1 }}
+  labels:
+    {{- if .Values.b1 }}
+    label: "true"
+    {{- else }}
+    label: "false"
+    {{- end }}
+two:
+  image: {{ .Values.image2 }}
+  labels:
+    {{- if .Values.b2 }}
+    label: "true"
+    {{- else }}
+    label: "false"
+    {{- end }}
+'''
+
+    answers = {'image2': 'busybox', 'b1': True, 'b2': False}
+    env = client.create_stack(name=name, dockerCompose=template,
+                              answers=answers,
+                              rancherCompose=rancher_compose)
+    env = client.wait_success(env)
+    env = client.wait_success(env.activateservices())
+    assert env.state == 'active'
+    assert env.answers == answers
     for s in env.services():
         s = client.wait_success(s)
         assert s.state == 'active'

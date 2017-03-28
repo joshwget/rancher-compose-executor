@@ -6,6 +6,7 @@ import (
 	"github.com/docker/docker/runconfig/opts"
 	"github.com/docker/libcompose/yaml"
 	"github.com/rancher/rancher-compose-executor/config"
+	"github.com/rancher/rancher-compose-executor/utils"
 )
 
 // EnvfileLookup is a structure that implements the project.EnvironmentLookup interface.
@@ -31,11 +32,11 @@ func (l *EnvfileLookup) Lookup(key string, config *config.ServiceConfig) []strin
 	return []string{}
 }
 
-func (l *EnvfileLookup) Variables() map[string]string {
+func (l *EnvfileLookup) Variables() map[string]interface{} {
 	envs, err := opts.ParseEnvFile(l.Path)
 	if err != nil {
-		return map[string]string{}
+		return map[string]interface{}{}
 	}
 	environ := yaml.MaporEqualSlice(envs)
-	return environ.ToMap()
+	return utils.ToMapInterface(environ.ToMap())
 }
