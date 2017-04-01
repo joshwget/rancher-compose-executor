@@ -47,6 +47,8 @@ type Machine struct {
 
 	ExtractedConfig string `json:"extractedConfig,omitempty" yaml:"extracted_config,omitempty"`
 
+	HostTemplateId string `json:"hostTemplateId,omitempty" yaml:"host_template_id,omitempty"`
+
 	Kind string `json:"kind,omitempty" yaml:"kind,omitempty"`
 
 	Labels map[string]interface{} `json:"labels,omitempty" yaml:"labels,omitempty"`

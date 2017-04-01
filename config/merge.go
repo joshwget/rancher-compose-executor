@@ -178,12 +178,12 @@ func Merge(existingServices *ServiceConfigs, environmentLookup EnvironmentLookup
 	adjustValues(serviceConfigs)
 	adjustValues(containerConfigs)
 
-	var dependencies map[string]*DependencyConfig
+	var stacks map[string]*StackConfig
 	var volumes map[string]*VolumeConfig
 	var networks map[string]*NetworkConfig
 	var secrets map[string]*SecretConfig
 	var hosts map[string]*HostConfig
-	if err := utils.Convert(rawConfig.Dependencies, &dependencies); err != nil {
+	if err := utils.Convert(rawConfig.Stacks, &stacks); err != nil {
 		return nil, err
 	}
 	if err := utils.Convert(rawConfig.Volumes, &volumes); err != nil {
@@ -205,13 +205,13 @@ func Merge(existingServices *ServiceConfigs, environmentLookup EnvironmentLookup
 	}
 
 	return &Config{
-		Services:     serviceConfigs,
-		Containers:   containerConfigs,
-		Dependencies: dependencies,
-		Volumes:      volumes,
-		Networks:     networks,
-		Secrets:      secrets,
-		Hosts:        hosts,
+		Services:   serviceConfigs,
+		Containers: containerConfigs,
+		Stacks:     stacks,
+		Volumes:    volumes,
+		Networks:   networks,
+		Secrets:    secrets,
+		Hosts:      hosts,
 	}, nil
 }
 

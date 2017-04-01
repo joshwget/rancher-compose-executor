@@ -22,18 +22,18 @@ type serviceAction func(service Service) error
 
 // Project holds libcompose project information.
 type Project struct {
-	Name              string
-	ServiceConfigs    *config.ServiceConfigs
-	ContainerConfigs  *config.ServiceConfigs
-	DependencyConfigs map[string]*config.DependencyConfig
-	VolumeConfigs     map[string]*config.VolumeConfig
-	NetworkConfigs    map[string]*config.NetworkConfig
-	SecretConfigs     map[string]*config.SecretConfig
-	HostConfigs       map[string]*config.HostConfig
-	Files             []string
-	ReloadCallback    func() error
+	Name             string
+	ServiceConfigs   *config.ServiceConfigs
+	ContainerConfigs *config.ServiceConfigs
+	StackConfigs     map[string]*config.StackConfig
+	VolumeConfigs    map[string]*config.VolumeConfig
+	NetworkConfigs   map[string]*config.NetworkConfig
+	SecretConfigs    map[string]*config.SecretConfig
+	HostConfigs      map[string]*config.HostConfig
+	Files            []string
+	ReloadCallback   func() error
 
-	dependencies Dependencies
+	stacks       Stacks
 	volumes      Volumes
 	secrets      Secrets
 	hosts        Hosts
@@ -46,14 +46,14 @@ type Project struct {
 // NewProject creates a new project with the specified context.
 func NewProject(context *Context) *Project {
 	p := &Project{
-		context:           context,
-		ServiceConfigs:    config.NewServiceConfigs(),
-		ContainerConfigs:  config.NewServiceConfigs(),
-		DependencyConfigs: make(map[string]*config.DependencyConfig),
-		VolumeConfigs:     make(map[string]*config.VolumeConfig),
-		NetworkConfigs:    make(map[string]*config.NetworkConfig),
-		SecretConfigs:     make(map[string]*config.SecretConfig),
-		HostConfigs:       make(map[string]*config.HostConfig),
+		context:          context,
+		ServiceConfigs:   config.NewServiceConfigs(),
+		ContainerConfigs: config.NewServiceConfigs(),
+		StackConfigs:     make(map[string]*config.StackConfig),
+		VolumeConfigs:    make(map[string]*config.VolumeConfig),
+		NetworkConfigs:   make(map[string]*config.NetworkConfig),
+		SecretConfigs:    make(map[string]*config.SecretConfig),
+		HostConfigs:      make(map[string]*config.HostConfig),
 	}
 
 	if context.LoggerFactory == nil {
@@ -189,8 +189,8 @@ func (p *Project) load(file string, bytes []byte) error {
 		p.reload = append(p.reload, name)
 	}
 
-	for name, config := range config.Dependencies {
-		p.DependencyConfigs[name] = config
+	for name, config := range config.Stacks {
+		p.StackConfigs[name] = config
 	}
 	for name, config := range config.Volumes {
 		p.VolumeConfigs[name] = config
@@ -205,12 +205,12 @@ func (p *Project) load(file string, bytes []byte) error {
 		p.HostConfigs[name] = config
 	}
 
-	if p.context.DependenciesFactory != nil {
-		dependencies, err := p.context.DependenciesFactory.Create(p.Name, p.DependencyConfigs)
+	if p.context.StacksFactory != nil {
+		stacks, err := p.context.StacksFactory.Create(p.Name, p.StackConfigs)
 		if err != nil {
 			return err
 		}
-		p.dependencies = dependencies
+		p.stacks = stacks
 	}
 	if p.context.VolumesFactory != nil {
 		volumes, err := p.context.VolumesFactory.Create(p.Name, p.VolumeConfigs, p.ServiceConfigs)
@@ -238,8 +238,8 @@ func (p *Project) load(file string, bytes []byte) error {
 }
 
 func (p *Project) initialize(ctx context.Context) error {
-	if p.dependencies != nil {
-		if err := p.dependencies.Initialize(ctx); err != nil {
+	if p.stacks != nil {
+		if err := p.stacks.Initialize(ctx); err != nil {
 			return err
 		}
 	}

@@ -14,7 +14,7 @@ func NewProject(context *Context) (*project.Project, error) {
 		Context: context,
 	}
 
-	context.DependenciesFactory = &RancherDependenciesFactory{
+	context.StacksFactory = &RancherStacksFactory{
 		Context: context,
 	}
 

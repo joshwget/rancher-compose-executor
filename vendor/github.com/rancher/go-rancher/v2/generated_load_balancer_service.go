@@ -11,6 +11,8 @@ type LoadBalancerService struct {
 
 	AssignServiceIpAddress bool `json:"assignServiceIpAddress,omitempty" yaml:"assign_service_ip_address,omitempty"`
 
+	BatchSize int64 `json:"batchSize,omitempty" yaml:"batch_size,omitempty"`
+
 	Created string `json:"created,omitempty" yaml:"created,omitempty"`
 
 	CurrentScale int64 `json:"currentScale,omitempty" yaml:"current_scale,omitempty"`
@@ -27,6 +29,8 @@ type LoadBalancerService struct {
 
 	InstanceIds []string `json:"instanceIds,omitempty" yaml:"instance_ids,omitempty"`
 
+	IntervalMillis int64 `json:"intervalMillis,omitempty" yaml:"interval_millis,omitempty"`
+
 	Kind string `json:"kind,omitempty" yaml:"kind,omitempty"`
 
 	LaunchConfig *LaunchConfig `json:"launchConfig,omitempty" yaml:"launch_config,omitempty"`
@@ -39,6 +43,8 @@ type LoadBalancerService struct {
 
 	Name string `json:"name,omitempty" yaml:"name,omitempty"`
 
+	PreviousRevisionId string `json:"previousRevisionId,omitempty" yaml:"previous_revision_id,omitempty"`
+
 	PublicEndpoints []PublicEndpoint `json:"publicEndpoints,omitempty" yaml:"public_endpoints,omitempty"`
 
 	RemoveTime string `json:"removeTime,omitempty" yaml:"remove_time,omitempty"`
@@ -47,13 +53,21 @@ type LoadBalancerService struct {
 
 	RetainIp bool `json:"retainIp,omitempty" yaml:"retain_ip,omitempty"`
 
+	RevisionId string `json:"revisionId,omitempty" yaml:"revision_id,omitempty"`
+
 	Scale int64 `json:"scale,omitempty" yaml:"scale,omitempty"`
 
-	ScalePolicy *ScalePolicy `json:"scalePolicy,omitempty" yaml:"scale_policy,omitempty"`
+	ScaleIncrement int64 `json:"scaleIncrement,omitempty" yaml:"scale_increment,omitempty"`
+
+	ScaleMax int64 `json:"scaleMax,omitempty" yaml:"scale_max,omitempty"`
+
+	ScaleMin int64 `json:"scaleMin,omitempty" yaml:"scale_min,omitempty"`
 
 	SelectorLink string `json:"selectorLink,omitempty" yaml:"selector_link,omitempty"`
 
 	StackId string `json:"stackId,omitempty" yaml:"stack_id,omitempty"`
+
+	StartFirst bool `json:"startFirst,omitempty" yaml:"start_first,omitempty"`
 
 	StartOnCreate bool `json:"startOnCreate,omitempty" yaml:"start_on_create,omitempty"`
 
@@ -97,13 +111,15 @@ type LoadBalancerServiceOperations interface {
 
 	ActionCancelupgrade(*LoadBalancerService) (*Service, error)
 
-	ActionContinueupgrade(*LoadBalancerService) (*Service, error)
-
 	ActionCreate(*LoadBalancerService) (*Service, error)
 
 	ActionDeactivate(*LoadBalancerService) (*Service, error)
 
 	ActionFinishupgrade(*LoadBalancerService) (*Service, error)
+
+	ActionGarbagecollect(*LoadBalancerService) (*Service, error)
+
+	ActionPause(*LoadBalancerService) (*Service, error)
 
 	ActionRemove(*LoadBalancerService) (*Service, error)
 
@@ -111,7 +127,7 @@ type LoadBalancerServiceOperations interface {
 
 	ActionRestart(*LoadBalancerService, *ServiceRestart) (*Service, error)
 
-	ActionRollback(*LoadBalancerService) (*Service, error)
+	ActionRollback(*LoadBalancerService, *ServiceRollback) (*Service, error)
 
 	ActionSetservicelinks(*LoadBalancerService, *SetServiceLinksInput) (*Service, error)
 
@@ -197,15 +213,6 @@ func (c *LoadBalancerServiceClient) ActionCancelupgrade(resource *LoadBalancerSe
 	return resp, err
 }
 
-func (c *LoadBalancerServiceClient) ActionContinueupgrade(resource *LoadBalancerService) (*Service, error) {
-
-	resp := &Service{}
-
-	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "continueupgrade", &resource.Resource, nil, resp)
-
-	return resp, err
-}
-
 func (c *LoadBalancerServiceClient) ActionCreate(resource *LoadBalancerService) (*Service, error) {
 
 	resp := &Service{}
@@ -229,6 +236,24 @@ func (c *LoadBalancerServiceClient) ActionFinishupgrade(resource *LoadBalancerSe
 	resp := &Service{}
 
 	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "finishupgrade", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *LoadBalancerServiceClient) ActionGarbagecollect(resource *LoadBalancerService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "garbagecollect", &resource.Resource, nil, resp)
+
+	return resp, err
+}
+
+func (c *LoadBalancerServiceClient) ActionPause(resource *LoadBalancerService) (*Service, error) {
+
+	resp := &Service{}
+
+	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "pause", &resource.Resource, nil, resp)
 
 	return resp, err
 }
@@ -260,11 +285,11 @@ func (c *LoadBalancerServiceClient) ActionRestart(resource *LoadBalancerService,
 	return resp, err
 }
 
-func (c *LoadBalancerServiceClient) ActionRollback(resource *LoadBalancerService) (*Service, error) {
+func (c *LoadBalancerServiceClient) ActionRollback(resource *LoadBalancerService, input *ServiceRollback) (*Service, error) {
 
 	resp := &Service{}
 
-	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "rollback", &resource.Resource, nil, resp)
+	err := c.rancherClient.doAction(LOAD_BALANCER_SERVICE_TYPE, "rollback", &resource.Resource, input, resp)
 
 	return resp, err
 }

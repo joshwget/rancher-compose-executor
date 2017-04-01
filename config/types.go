@@ -107,7 +107,6 @@ type ServiceConfigV1 struct {
 	HealthCheck *client.InstanceHealthCheck `yaml:"health_check,omitempty"`
 
 	Metadata        map[string]interface{}          `yaml:"metadata,omitempty"`
-	ScalePolicy     *client.ScalePolicy             `yaml:"scale_policy,omitempty"`
 	ServiceSchemas  map[string]client.Schema        `yaml:"service_schemas,omitempty"`
 	UpgradeStrategy client.InServiceUpgradeStrategy `yaml:"upgrade_strategy,omitempty"`
 	StorageDriver   *client.StorageDriver           `yaml:"storage_driver,omitempty"`
@@ -210,7 +209,6 @@ type RancherConfig struct {
 	HealthCheck *client.InstanceHealthCheck `yaml:"health_check,omitempty"`
 
 	Metadata        map[string]interface{}          `yaml:"metadata,omitempty"`
-	ScalePolicy     *client.ScalePolicy             `yaml:"scale_policy,omitempty"`
 	ServiceSchemas  map[string]client.Schema        `yaml:"service_schemas,omitempty"`
 	UpgradeStrategy client.InServiceUpgradeStrategy `yaml:"upgrade_strategy,omitempty"`
 	StorageDriver   *client.StorageDriver           `yaml:"storage_driver,omitempty"`
@@ -288,11 +286,12 @@ type HostConfig struct {
 	Dynamic map[string]interface{} `yaml:",inline"`
 }
 
-type DependencyConfig struct {
-	Name     string `yaml:"name,omitempty"`
-	Template string `yaml:"template,omitempty"`
-	Version  string `yaml:"version,omitempty"`
-	// TODO: additional answers/environment?
+type StackConfig struct {
+	Name              string                 `yaml:"name,omitempty"`
+	Description       string                 `yaml:"description,omitempty"`
+	TemplateId        string                 `yaml:"template_id,omitempty"`
+	TemplateVersionId string                 `yaml:"template_version_id,omitempty"`
+	Answers           map[string]interface{} `yaml:"answers,omitempty"`
 }
 
 type RawConfig struct {
@@ -305,11 +304,11 @@ type RawConfig struct {
 	NetworkDrivers  RawServiceMap `yaml:"network_drivers,omitempty"`
 	VirtualMachines RawServiceMap `yaml:"virtual_machines,omitempty"`
 
-	Dependencies map[string]interface{} `yaml:"dependencies,omitempty"`
-	Volumes      map[string]interface{} `yaml:"volumes,omitempty"`
-	Networks     map[string]interface{} `yaml:"networks,omitempty"`
-	Secrets      map[string]interface{} `yaml:"secrets,omitempty"`
-	Hosts        map[string]interface{} `yaml:"hosts,omitempty"`
+	Stacks   map[string]interface{} `yaml:"stacks,omitempty"`
+	Volumes  map[string]interface{} `yaml:"volumes,omitempty"`
+	Networks map[string]interface{} `yaml:"networks,omitempty"`
+	Secrets  map[string]interface{} `yaml:"secrets,omitempty"`
+	Hosts    map[string]interface{} `yaml:"hosts,omitempty"`
 }
 
 type Config struct {
@@ -320,11 +319,11 @@ type Config struct {
 	NetworkDrivers  map[string]*ServiceConfig `yaml:"network_drivers,omitempty"`
 	VirtualMachines map[string]*ServiceConfig `yaml:"virtual_machines,omitempty"`
 
-	Dependencies map[string]*DependencyConfig `yaml:"dependencies,omitempty"`
-	Volumes      map[string]*VolumeConfig     `yaml:"volumes,omitempty"`
-	Networks     map[string]*NetworkConfig    `yaml:"networks,omitempty"`
-	Secrets      map[string]*SecretConfig     `yaml:"secrets,omitempty"`
-	Hosts        map[string]*HostConfig       `yaml:"hosts,omitempty"`
+	Stacks   map[string]*StackConfig   `yaml:"stacks,omitempty"`
+	Volumes  map[string]*VolumeConfig  `yaml:"volumes,omitempty"`
+	Networks map[string]*NetworkConfig `yaml:"networks,omitempty"`
+	Secrets  map[string]*SecretConfig  `yaml:"secrets,omitempty"`
+	Hosts    map[string]*HostConfig    `yaml:"hosts,omitempty"`
 }
 
 // NewServiceConfigs initializes a new Configs struct

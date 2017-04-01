@@ -25,7 +25,7 @@ type Context struct {
 	isOpen              bool
 	ServiceFactory      ServiceFactory
 	ContainerFactory    ServiceFactory
-	DependenciesFactory DependenciesFactory
+	StacksFactory StacksFactory
 	VolumesFactory      VolumesFactory
 	SecretsFactory      SecretsFactory
 	HostsFactory        HostsFactory
