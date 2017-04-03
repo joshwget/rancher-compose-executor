@@ -20,6 +20,9 @@ func constructProjectUpgrade(logger *logrus.Entry, stack *client.Stack, upgradeO
 		variables[k] = v
 	}
 
+	logger.Infoln("$$$$1", stack.DockerCompose)
+	logger.Infoln("$$$$2", stack.RancherCompose)
+
 	context := rancher.Context{
 		Context: project.Context{
 			ProjectName: stack.Name,
