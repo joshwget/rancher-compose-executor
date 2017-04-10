@@ -4,38 +4,24 @@ import (
 	"strings"
 
 	"github.com/docker/docker/runconfig/opts"
-	"github.com/docker/libcompose/yaml"
 	"github.com/rancher/rancher-compose-executor/config"
 )
 
-// EnvfileLookup is a structure that implements the project.EnvironmentLookup interface.
-// It holds the path of the file where to lookup environment values.
-type EnvfileLookup struct {
-	Path string
-}
-
-// Lookup creates a string slice of string containing a "docker-friendly" environment string
-// in the form of 'key=value'. It gets environment values using a '.env' file in the specified
-// path.
-func (l *EnvfileLookup) Lookup(key string, config *config.ServiceConfig) []string {
-	envs, err := opts.ParseEnvFile(l.Path)
+// Lookup variables from an environment variable file
+func NewEnvFileLookup(path string, parent config.EnvironmentLookup) (*CommonLookup, error) {
+	envs, err := opts.ParseEnvFile(path)
 	if err != nil {
-		return []string{}
+		return nil, err
 	}
+	variables := map[string]interface{}{}
 	for _, env := range envs {
-		e := strings.Split(env, "=")
-		if e[0] == key {
-			return []string{env}
+		split := strings.SplitN(env, "=", 2)
+		if len(split) > 1 {
+			variables[split[0]] = split[1]
 		}
 	}
-	return []string{}
-}
-
-func (l *EnvfileLookup) Variables() map[string]string {
-	envs, err := opts.ParseEnvFile(l.Path)
-	if err != nil {
-		return map[string]string{}
-	}
-	environ := yaml.MaporEqualSlice(envs)
-	return environ.ToMap()
+	return &CommonLookup{
+		variables: variables,
+		parent:    parent,
+	}, nil
 }

@@ -42,12 +42,12 @@ func (p *RancherProjectFactory) Create(c *cli.Context) (*project.Project, error)
 		return nil, err
 	}
 
-	qLookup, err := lookup.NewQuestionLookup(rancherComposeFile, &lookup.OsEnvLookup{})
+	qLookup, err := lookup.NewQuestionLookup(rancherComposeFile, lookup.NewOsEnvLookup())
 	if err != nil {
 		return nil, err
 	}
 
-	envLookup, err := lookup.NewFileEnvLookup(c.GlobalString("env-file"), qLookup)
+	envLookup, err := lookup.NewEnvFileLookup(c.GlobalString("env-file"), qLookup)
 	if err != nil {
 		return nil, err
 	}
