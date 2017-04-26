@@ -6,6 +6,7 @@ import (
 	"io"
 	"strings"
 	"sync"
+	"time"
 
 	"golang.org/x/net/context"
 
@@ -144,6 +145,14 @@ func (r *RancherService) up(create bool) error {
 	if service.Actions["activate"] != "" {
 		service, err = r.context.Client.Service.ActionActivate(service)
 		err = r.Wait(service)
+	}
+
+	for {
+		if service.HealthState == "healthy" {
+			break
+		}
+		logrus.Debugf("Service %s has health state %s", service.Name, service.HealthState)
+		time.Sleep(150 * time.Millisecond)
 	}
 
 	return err
