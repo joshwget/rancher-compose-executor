@@ -63,6 +63,7 @@ func (p *RancherProjectFactory) Create(c *cli.Context) (*project.Project, error)
 	context.Interval = int64(c.Int("interval"))
 	context.ConfirmUpgrade = c.Bool("confirm-upgrade")
 	context.Pull = c.Bool("pull")
+	context.InfrastructureStack = c.Bool("infra")
 
 	return rancher.NewProject(context)
 }
@@ -119,6 +120,10 @@ func UpCommand(factory ProjectFactory) cli.Command {
 			cli.BoolFlag{
 				Name:  "pull, p",
 				Usage: "Before doing the upgrade do an image pull on all hosts that have the image already",
+			},
+			cli.BoolFlag{
+				Name:  "infra, i",
+				Usage: "Create an infrastructure stack rather than a user stack",
 			},
 			cli.BoolFlag{
 				Name:  "d",

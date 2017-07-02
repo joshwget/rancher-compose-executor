@@ -16,17 +16,18 @@ var projectRegexp = regexp.MustCompile("[^a-zA-Z0-9-]")
 type Context struct {
 	project.Context
 
-	Url          string
-	AccessKey    string
-	SecretKey    string
-	Client       *client.RancherClient
-	Stack        *client.Stack
-	isOpen       bool
-	SidekickInfo *SidekickInfo
-	Uploader     Uploader
-	PullCached   bool
-	Pull         bool
-	Args         []string
+	Url                 string
+	AccessKey           string
+	SecretKey           string
+	Client              *client.RancherClient
+	Stack               *client.Stack
+	InfrastructureStack bool
+	isOpen              bool
+	SidekickInfo        *SidekickInfo
+	Uploader            Uploader
+	PullCached          bool
+	Pull                bool
+	Args                []string
 
 	Upgrade        bool
 	ForceUpgrade   bool
@@ -137,9 +138,15 @@ func (c *Context) LoadStack() (*client.Stack, error) {
 		}
 	}
 
-	logrus.Infof("Creating stack %s", projectName)
+	if c.InfrastructureStack {
+		logrus.Infof("Creating infrastructure stack %s", projectName)
+	} else {
+		logrus.Infof("Creating stack %s", projectName)
+	}
+
 	stack, err := c.Client.Stack.Create(&client.Stack{
-		Name: projectName,
+		Name:   projectName,
+		System: c.InfrastructureStack,
 	})
 	if err != nil {
 		return nil, err
