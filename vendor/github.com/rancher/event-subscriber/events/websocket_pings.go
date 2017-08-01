@@ -68,7 +68,7 @@ func (h *pongHandler) startTimer(checkInterval, maxWait int) {
 			if time.Now().After(timeoutAt) {
 				// bad!
 				log.Infof("Hit websocket pong timeout. Last websocket ping received at %v. Closing connection.", t)
-				h.r.Stop()
+				//h.r.Stop()
 			}
 		}
 	}

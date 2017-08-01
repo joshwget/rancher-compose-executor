@@ -2,9 +2,10 @@ package events
 
 import (
 	"fmt"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/rancher/event-subscriber/locks"
-	"github.com/rancher/go-rancher/v2"
+	"github.com/rancher/go-rancher/v3"
 )
 
 type EventLocker func(event *Event) locks.Locker
