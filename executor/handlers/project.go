@@ -15,6 +15,10 @@ import (
 )
 
 func constructProject(stack *client.Stack, opts client.ClientOpts) (*project.Project, error) {
+	if stack.ExternalId == "" && len(stack.Templates) == 0 {
+		return nil, nil
+	}
+
 	// TODO: don't create each time
 	opts.Url = fmt.Sprintf("%s/projects/%s/schemas", opts.Url, stack.AccountId)
 	rancherClient, err := client.NewRancherClient(&opts)

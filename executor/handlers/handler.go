@@ -48,7 +48,7 @@ func stackUp(event *events.Event, apiClient *client.RancherClient, forceUp bool)
 	}
 
 	project, err := constructProject(stack, *apiClient.GetOpts())
-	if err != nil {
+	if err != nil || project == nil {
 		return err
 	}
 
