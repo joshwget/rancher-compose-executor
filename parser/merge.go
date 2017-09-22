@@ -160,33 +160,18 @@ func Merge(existingServices map[string]*config.ServiceConfig, vars map[string]st
 		rawConfig.Networks[k] = v
 	}
 
-	baseRawServices, err = preProcessServiceMap(baseRawServices)
-	if err != nil {
-		return nil, err
-	}
-	baseRawContainers, err = preProcessServiceMap(baseRawContainers)
-	if err != nil {
-		return nil, err
-	}
-
-	baseRawServices, err = TryConvertStringsToInts(baseRawServices, getRancherConfigObjects())
-	if err != nil {
-		return nil, err
-	}
-	baseRawContainers, err = TryConvertStringsToInts(baseRawContainers, getRancherConfigObjects())
-	if err != nil {
-		return nil, err
-	}
+	baseRawServices = preProcessServiceMap(baseRawServices)
+	baseRawContainers = preProcessServiceMap(baseRawContainers)
 
 	var serviceConfigs map[string]*config.ServiceConfig
 	if rawConfig.Version == "2" {
 		var err error
-		serviceConfigs, err = mergeServicesV2(vars, resourceLookup, file, baseRawServices)
+		serviceConfigs, err = mergeServicesV2(resourceLookup, file, baseRawServices)
 		if err != nil {
 			return nil, err
 		}
 	} else {
-		serviceConfigsV1, err := mergeServicesV1(vars, resourceLookup, file, baseRawServices)
+		serviceConfigsV1, err := mergeServicesV1(resourceLookup, file, baseRawServices)
 		if err != nil {
 			return nil, err
 		}
@@ -217,7 +202,7 @@ func Merge(existingServices map[string]*config.ServiceConfig, vars map[string]st
 	var containerConfigs map[string]*config.ServiceConfig
 	if rawConfig.Version == "2" {
 		var err error
-		containerConfigs, err = mergeServicesV2(vars, resourceLookup, file, baseRawContainers)
+		containerConfigs, err = mergeServicesV2(resourceLookup, file, baseRawContainers)
 		if err != nil {
 			return nil, err
 		}

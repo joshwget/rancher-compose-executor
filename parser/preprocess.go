@@ -9,39 +9,38 @@ import (
 	"github.com/rancher/rancher-compose-executor/config"
 )
 
-func preProcessServiceMap(serviceMap config.RawServiceMap) (config.RawServiceMap, error) {
+func preProcessServiceMap(serviceMap config.RawServiceMap) config.RawServiceMap {
+	rancherFields := getRancherConfigObjects()
 	newServiceMap := make(config.RawServiceMap)
-
 	for k, v := range serviceMap {
 		newServiceMap[k] = make(config.RawService)
 		for k2, v2 := range v {
 			if k2 == "environment" || k2 == "labels" {
-				newServiceMap[k][k2] = preProcess(v2, true)
+				v2 = preProcess(v2, true)
 			} else {
-				newServiceMap[k][k2] = preProcess(v2, false)
+				v2 = preProcess(v2, false)
+			}
+			if _, ok := rancherFields[k2]; ok {
+				newServiceMap[k][k2] = tryConvertStringsToInts(v2, true)
+			} else {
+				newServiceMap[k][k2] = tryConvertStringsToInts(v2, false)
 			}
 		}
 	}
-
-	return newServiceMap, nil
+	return newServiceMap
 }
 
 func preProcess(item interface{}, replaceTypes bool) interface{} {
 	switch typedDatas := item.(type) {
-
 	case map[interface{}]interface{}:
 		newMap := make(map[interface{}]interface{})
-
 		for key, value := range typedDatas {
 			newMap[key] = preProcess(value, replaceTypes)
 		}
 		return newMap
 
 	case []interface{}:
-		// newArray := make([]interface{}, 0) will cause golint to complain
 		var newArray []interface{}
-		newArray = make([]interface{}, 0)
-
 		for _, value := range typedDatas {
 			newArray = append(newArray, preProcess(value, replaceTypes))
 		}
@@ -53,25 +52,6 @@ func preProcess(item interface{}, replaceTypes bool) interface{} {
 		}
 		return item
 	}
-}
-
-func TryConvertStringsToInts(serviceMap config.RawServiceMap, fields map[string]bool) (config.RawServiceMap, error) {
-	newServiceMap := make(config.RawServiceMap)
-
-	for k, v := range serviceMap {
-		newServiceMap[k] = make(config.RawService)
-
-		for k2, v2 := range v {
-			if _, ok := fields[k2]; ok {
-				newServiceMap[k][k2] = tryConvertStringsToInts(v2, true)
-			} else {
-				newServiceMap[k][k2] = tryConvertStringsToInts(v2, false)
-			}
-
-		}
-	}
-
-	return newServiceMap, nil
 }
 
 func tryConvertStringsToInts(item interface{}, replaceTypes bool) interface{} {
