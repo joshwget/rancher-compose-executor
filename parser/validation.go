@@ -106,9 +106,7 @@ func convertKeysToStrings(item interface{}) interface{} {
 		return newMap
 
 	case []interface{}:
-		// newArray := make([]interface{}, 0) will cause golint to complain
 		var newArray []interface{}
-		newArray = make([]interface{}, 0)
 
 		for _, value := range typedDatas {
 			newArray = append(newArray, convertKeysToStrings(value))

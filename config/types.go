@@ -7,7 +7,7 @@ import (
 )
 
 // ServiceConfigV1 holds version 1 of libcompose service configuration
-type ServiceConfigV1 struct {
+/*type ServiceConfigV1 struct {
 	BlkioWeight       yaml.StringorInt     `yaml:"blkio_weight,omitempty"`
 	BlkioWeightDevice []string             `yaml:"blkio_weight_device,omitempty"`
 	Build             string               `yaml:"build,omitempty"`
@@ -98,7 +98,7 @@ type ServiceConfigV1 struct {
 	UpgradeStrategy client.InServiceUpgradeStrategy `yaml:"upgrade_strategy,omitempty"`
 	StorageDriver   *client.StorageDriver           `yaml:"storage_driver,omitempty"`
 	NetworkDriver   *client.NetworkDriver           `yaml:"network_driver,omitempty"`
-}
+}*/
 
 // Log holds v2 logging information
 type Log struct {
@@ -305,7 +305,6 @@ type RawConfig struct {
 
 	Dependencies map[string]interface{} `yaml:"dependencies,omitempty"`
 	Volumes      map[string]interface{} `yaml:"volumes,omitempty"`
-	Networks     map[string]interface{} `yaml:"networks,omitempty"`
 	Secrets      map[string]interface{} `yaml:"secrets,omitempty"`
 	Hosts        map[string]interface{} `yaml:"hosts,omitempty"`
 
@@ -318,7 +317,6 @@ type Config struct {
 	Containers          map[string]*ServiceConfig    `yaml:"containers,omitempty"`
 	Dependencies        map[string]*DependencyConfig `yaml:"dependencies,omitempty"`
 	Volumes             map[string]*VolumeConfig     `yaml:"volumes,omitempty"`
-	Networks            map[string]*NetworkConfig    `yaml:"networks,omitempty"`
 	Secrets             map[string]*SecretConfig     `yaml:"secrets,omitempty"`
 	Hosts               map[string]*HostConfig       `yaml:"hosts,omitempty"`
 	KubernetesResources map[string]interface{}       `yaml:"kubernetes_resources,omitempty"`
@@ -331,7 +329,6 @@ func NewConfig() *Config {
 		Containers:          map[string]*ServiceConfig{},
 		Dependencies:        map[string]*DependencyConfig{},
 		Volumes:             map[string]*VolumeConfig{},
-		Networks:            map[string]*NetworkConfig{},
 		Secrets:             map[string]*SecretConfig{},
 		Hosts:               map[string]*HostConfig{},
 		KubernetesResources: map[string]interface{}{},
