@@ -3,6 +3,7 @@ package project
 import (
 	"os"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/rancher/rancher-compose-executor/kubectl"
 	"github.com/rancher/rancher-compose-executor/project/options"
 	"golang.org/x/net/context"
@@ -33,7 +34,7 @@ func (p *Project) Delete(ctx context.Context) error {
 
 	for name, resource := range p.Config.KubernetesResources {
 		if err := kubectl.Delete(kubeconfigLocation, name, namespace, resource); err != nil {
-			return err
+			log.Errorf("Failed to delete Kubernetes resource %s: %v", name, err)
 		}
 	}
 
